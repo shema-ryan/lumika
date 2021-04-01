@@ -1,21 +1,28 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 class Auth {
-
-
-
  static  Future<void> createAccount(
       {required String name,
         required String phoneNumber ,
         required String email,
-        required String password}) async {
+        required String password,
+      required File file}) async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password ,);
+        final UploadTask stored = FirebaseStorage.instance.ref('profile/$name.png').putFile(file);
+        stored.snapshotEvents.listen((snapshot){
+          print(' this is what is happening now ${snapshot.bytesTransferred / snapshot.totalBytes * 100}');
+        });
+        print('total amount of bytes needed -------->${stored.snapshot.totalBytes}');
+        print('amount being uploaded ---------> ${stored.snapshot.bytesTransferred}');
+        print('checking the state of the upload ---------> ${stored.snapshot.state}');
+
+        final imageUrl = await stored.snapshot. ref.getDownloadURL();
       userCredential.user!.updateProfile(
         displayName: name,
-        photoURL: phoneNumber,
+        photoURL: imageUrl,
       );
       userCredential.user!.sendEmailVerification();
     } on FirebaseAuthException catch (e) {
@@ -52,31 +59,4 @@ class Auth {
      print(e.toString());
    }
 }
-
- static Future<void>signInWithGoogle()async{
-   //trigger
-try{
-  final GoogleSignInAccount? trigger = await GoogleSignIn(
-    scopes: [
-      'email',
-      'https://www.googleapis.co-m/auth/contacts.readonly',
-    ],
-  ).signIn();
-  //obtain auth credential
-  final GoogleSignInAuthentication? googleAuth = await trigger!.authentication;
-  // create credential
-  final OAuthCredential? credential = GoogleAuthProvider.credential(
-    accessToken: googleAuth!.accessToken,
-    idToken: googleAuth.idToken,
-  );
-  // signIn with credential
-  await FirebaseAuth.instance.signInWithCredential(credential!);
-} on FirebaseAuthException catch(e){
-  throw e.message!;
-}catch(e){
-  print('shema Amandin ${e.toString()}');
-  throw e.toString();
-}
-}
-
 }

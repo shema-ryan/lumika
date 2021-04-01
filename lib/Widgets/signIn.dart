@@ -16,6 +16,12 @@ class _SignInState extends State<SignIn> {
     final _theme = Theme.of(context);
     final _scaffold = ScaffoldMessenger.of(context);
     _scaffold.showSnackBar(SnackBar(
+      shape:const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: const Radius.circular(5.0),
+          topRight: const Radius.circular(5.0)
+        ),
+      ),
       backgroundColor: _theme.errorColor,
       content: Text(message),
     ));
@@ -39,17 +45,6 @@ class _SignInState extends State<SignIn> {
 
   // SignInwith google
 
-  void signInWithGoogle(){
-    setState(() {
-      _loading = true;
-    });
-    Auth.signInWithGoogle().catchError((e){
-      setState(() {
-        _loading = false;
-      });
-      handleError(e);
-    }).then((value) => _loading = false);
-  }
   @override
   Widget build(BuildContext context) {
     final _theme = Theme.of(context);
@@ -174,7 +169,6 @@ class _SignInState extends State<SignIn> {
                 width: _media * 0.38,
                 child: ElevatedButton(
                   onPressed: () {
-                    signInWithGoogle();
                   },
                   child: const Text('Google'),
                   style: ElevatedButton.styleFrom(

@@ -27,7 +27,7 @@ class ConfirmScreen extends StatelessWidget {
               children: [
                 Expanded(
                   flex: 2,
-                  child: Image.asset('assets/confirm1.png'),),
+                  child:Image.asset('assets/confirm1.png'),),
 
                 SizedBox(
                   height: 50,

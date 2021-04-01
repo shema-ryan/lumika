@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../Widgets/widget.dart';
+import 'package:permission_handler/permission_handler.dart';
 class AuthenticationScreen extends StatefulWidget {
   const AuthenticationScreen();
 
@@ -13,6 +14,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> with Single
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    Future.delayed(Duration.zero , ()async{
+      await Permission.camera.request();
+      await Permission.location.request();
+    });
   }
   @override
   Widget build(BuildContext context) {
@@ -20,7 +25,6 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> with Single
     final _media = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Container(
-        child: DecoratedBox(
           child: SafeArea(
             child: ListView(
               children: [
@@ -59,40 +63,35 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> with Single
                 SizedBox(
                   height:  _media * 0.05,
                 ),
-                Container(
-                  height:  _media * 1.22,
-                  width: double.infinity,
-                  child: Card(
-                    color: Colors.white.withOpacity(0.8),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          TabBar(
-                               indicatorColor: _theme.primaryColor,
-                                controller: _tabController,
-                                tabs: [
-                                  const Tab(
-                                    child: const Text('Sign In'),
-                                  ),
-                                  const Tab(
-                                    text: 'Create Account',
-                                  ),
-                                ],
-                              ),
-                          Container(
-                            height:  _media * 1.02,
-                            width:  _media * 1.02,
-                            child: TabBarView(
+                Card(
+                  color: Colors.white.withOpacity(0.8),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        TabBar(
+                             indicatorColor: _theme.primaryColor,
                               controller: _tabController,
-                              children: [
-                                SignIn(),
-                                SignUp(),
+                              tabs: [
+                                const Tab(
+                                  child: const Text('Sign In'),
+                                ),
+                                const Tab(
+                                  text: 'Create Account',
+                                ),
                               ],
                             ),
+                        Container(
+                          height:  _media ,
+                          child: TabBarView(
+                            controller: _tabController,
+                            children: [
+                              SignIn(),
+                              SignUp(),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -100,18 +99,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> with Single
 
             ),
           ),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.bottomLeft,
-                end: Alignment.topCenter,
-                stops: [0.0005 , 0.8],
-                colors: [
-               Color(0xffE8B44A).withOpacity(0.6),
-                Colors.transparent,
-              ]
-            )
-          ),
-        ),
+
        decoration:const BoxDecoration(
          image: const DecorationImage(
            fit: BoxFit.cover,
