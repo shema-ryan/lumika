@@ -11,15 +11,8 @@ class Auth {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password ,);
-        final UploadTask stored = FirebaseStorage.instance.ref('profile/$name.png').putFile(file);
-        stored.snapshotEvents.listen((snapshot){
-          print(' this is what is happening now ${snapshot.bytesTransferred / snapshot.totalBytes * 100}');
-        });
-        print('total amount of bytes needed -------->${stored.snapshot.totalBytes}');
-        print('amount being uploaded ---------> ${stored.snapshot.bytesTransferred}');
-        print('checking the state of the upload ---------> ${stored.snapshot.state}');
-
-        final imageUrl = await stored.snapshot. ref.getDownloadURL();
+        final stored = await FirebaseStorage.instance.ref('profile/$name.png').putFile(file);
+        final imageUrl = await stored. ref.getDownloadURL();
       userCredential.user!.updateProfile(
         displayName: name,
         photoURL: imageUrl,

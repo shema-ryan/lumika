@@ -31,7 +31,6 @@ class _SignUpState extends State<SignUp> {
      }
   }
   // function to handle error message
-
   void handleError(String message){
     final _theme = Theme.of(context);
     final _scaffold = ScaffoldMessenger.of(context);
