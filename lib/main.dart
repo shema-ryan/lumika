@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import './Provider/provider.dart';
@@ -13,10 +12,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 void main()async{
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  //   DeviceOrientation.portraitDown,
+  // ]);
   await Firebase.initializeApp();
   runApp(MyApp());
 }
@@ -29,6 +28,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<AppTheme>(
           create:(_)=> AppTheme() ,
+        ),
+        ChangeNotifierProvider<ProductList>(
+          create:(_)=> ProductList(),
         ),
       ],
       child:HomePage(),
@@ -49,7 +51,6 @@ class HomePage extends StatelessWidget {
             return Scaffold(body: Center(child:const  Text('we had got an error'),),);
           }
           else if (snapshot.connectionState == ConnectionState.done){
-            print('we reached the end ');
             return Scaffold(
               body: const Center(child:const  Center(child: const CircularProgressIndicator(),),),
             );
@@ -69,7 +70,30 @@ class HomePage extends StatelessWidget {
         ResetPassword.routeName:(BuildContext context )=>ResetPassword(),
         MainScreen.routeName : (BuildContext context)=>MainScreen(),
         ConfirmScreen.routeName :(BuildContext context)=> ConfirmScreen(),
+        ProductScreen.routeName :(BuildContext context )=>ProductScreen(),
+        DetailsScreen.routeName : (BuildContext context )=>DetailsScreen()
       },
+      onUnknownRoute: (RouteSettings routeGen){
+        print('we ended here for sure !');
+        if(routeGen.name != null){
+          return MaterialPageRoute(builder: (context)=> Scaffold(
+            appBar: AppBar(title:  Text('Sorry Beloved' , style: Theme.of(context).textTheme.headline6,), centerTitle: true, elevation: 0.0, iconTheme:Theme.of(context).iconTheme,),
+            body: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset('assets/404.png'),
+                const SizedBox(height: 20,),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text('No page found !' , style: Theme.of(context).textTheme.headline6!),
+                )
+              ],
+            ),
+          ));
+        }
+      },
+
     ) ;
   }
 }

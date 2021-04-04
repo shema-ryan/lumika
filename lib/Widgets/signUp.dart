@@ -7,7 +7,6 @@ class SignUp extends StatefulWidget {
   @override
   _SignUpState createState() => _SignUpState();
 }
-
 class _SignUpState extends State<SignUp> {
   final _form2 = GlobalKey<FormState>();
   bool _loading = false ;
@@ -15,14 +14,13 @@ class _SignUpState extends State<SignUp> {
   bool _hide = true ;
   bool _changeImage = false ;
   final ImagePicker _picker = ImagePicker();
-
   File? _image;
   String? userName ;
   String? phoneNumber ;
   String? email ;
   String? passWord;
   Future<void> pickImage(ImageSource imageSource )async{
-     final picked = await _picker.getImage(source: imageSource  , imageQuality: 50 , maxHeight: 100 , maxWidth: 100);
+     final picked = await _picker.getImage(source: imageSource);
      if(picked != null){
        setState(() {
          _image = File(picked.path);
@@ -52,6 +50,7 @@ class _SignUpState extends State<SignUp> {
     _form2.currentState!.validate();
     if(!_checked){
      handleError('Read and Accept Terms and Conditions');
+     return ;
     }
     if(_image == null){
       handleError('please provide a profile photo');
