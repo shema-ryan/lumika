@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:garage/Screens/detailScreen.dart';
 import '../Provider/provider.dart';
+import 'package:provider/provider.dart';
 class GridWidget extends StatelessWidget {
   const GridWidget({
     Key? key,
@@ -15,6 +16,7 @@ class GridWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _scaffold = ScaffoldMessenger.of(context);
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -29,11 +31,14 @@ class GridWidget extends StatelessWidget {
           child: Column(
             children: [
               Expanded(
-                child: FadeInImage(
-                  placeholder:const AssetImage('assets/96x96.gif'),
-                  fit: BoxFit.cover,
-                  image: NetworkImage(
-                    _obtainedProduct.url,
+                child: Hero(
+                  tag: _obtainedProduct.id,
+                  child: FadeInImage(
+                    placeholder:const AssetImage('assets/96x96.gif'),
+                    fit: BoxFit.cover,
+                    image: NetworkImage(
+                      _obtainedProduct.url,
+                    ),
                   ),
                 ),
               ),
@@ -43,7 +48,19 @@ class GridWidget extends StatelessWidget {
                       Icons.shopping_cart,
                       color: _theme.iconTheme.color,
                     ),
-                    onPressed: () {}),
+                    onPressed: () {
+                      _scaffold.removeCurrentSnackBar(reason: SnackBarClosedReason.timeout);
+                      Provider.of<CartProvider>(context , listen: false).addCart(product: _obtainedProduct);
+                      _scaffold.showSnackBar(SnackBar(
+                        content: const Text('an item has been added to cart'),
+                        action: SnackBarAction(
+                          label: 'UNDO',
+                          onPressed: (){
+                            Provider.of<CartProvider>(context , listen: false).removeCartItem(_obtainedProduct);
+                          },
+                        ),
+                      ));
+                    }),
                 backgroundColor: Colors.black26,
                 title: Text(
                   _obtainedProduct.name,

@@ -2,16 +2,8 @@ import 'package:flutter/material.dart';
 import '../Provider/provider.dart';
 import 'package:provider/provider.dart';
 
-class DetailsScreen extends StatefulWidget {
-  static const String routeName = '/DetailsScreen.dart';
-
-  const DetailsScreen();
-
-  @override
-  _DetailsScreenState createState() => _DetailsScreenState();
-}
-
-class _DetailsScreenState extends State<DetailsScreen> {
+class DetailsScreen extends StatelessWidget  {
+  static const routeName ='/DetailsScreen';
   @override
   Widget build(BuildContext context) {
     final _theme = Theme.of(context);
@@ -33,10 +25,13 @@ class _DetailsScreenState extends State<DetailsScreen> {
         children: [
           Positioned(
               top: 0,
-              child: Image.network(
-                _selectedProduct.url,
-                fit: BoxFit.cover,
-                height: _media * 0.8931,
+              child: Hero(
+                tag:_selectedProduct.id,
+                child: Image.network(
+                  _selectedProduct.url,
+                  fit: BoxFit.cover,
+                  height: _media * 0.8931,
+                ),
               )),
           Positioned(
             top: _media * 0.85241,
@@ -64,14 +59,16 @@ class _DetailsScreenState extends State<DetailsScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: (){},
+                      onPressed: (){
+                      Provider.of<CartProvider>(context , listen: false).addCart(product: _selectedProduct);
+                      },
                       child: Text('Add to Cart' , style: _theme.textTheme.headline6,),
                     ),
                   ),
                 ],
               ),
               decoration: BoxDecoration(
-                color: _colorDet ? Colors.white: _theme.primaryColor,
+                color: _colorDet ? Colors.white: const Color(0xff353839),
                 borderRadius: BorderRadius.only(
                   topRight:const Radius.circular(15),
                   topLeft:const  Radius.circular(15),

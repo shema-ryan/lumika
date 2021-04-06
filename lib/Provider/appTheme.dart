@@ -47,8 +47,7 @@ class AppTheme extends ChangeNotifier {
             elevatedButtonTheme: ElevatedButtonThemeData(
                 style: ElevatedButton.styleFrom(
                     elevation: 2,
-                    onPrimary: Colors.blue,
-                    primary: Colors.black45,
+                    primary: const Color(0xffE8B44A) ,
                     textStyle: GoogleFonts.aBeeZee(
                       fontSize: 18,
                     ))),

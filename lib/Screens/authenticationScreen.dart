@@ -43,7 +43,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> with Single
                        )
                      ),
                      TextSpan(
-                       text: 'Garage',
+                       text: 'Lumika',
                        style: _theme.textTheme.headline6!.copyWith(
                          color: Color(0xffE8B44A),
                          fontWeight: FontWeight.bold,

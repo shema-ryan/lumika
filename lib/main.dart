@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/widgets.dart';
+import 'package:garage/Provider/cartProvider.dart';
 import 'package:provider/provider.dart';
 import './Provider/provider.dart';
 import 'package:garage/Screens/screens.dart';
@@ -26,6 +27,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider<CartProvider>(
+          create: (_)=> CartProvider(),
+        ),
         ChangeNotifierProvider<AppTheme>(
           create:(_)=> AppTheme() ,
         ),
@@ -71,7 +75,9 @@ class HomePage extends StatelessWidget {
         MainScreen.routeName : (BuildContext context)=>MainScreen(),
         ConfirmScreen.routeName :(BuildContext context)=> ConfirmScreen(),
         ProductScreen.routeName :(BuildContext context )=>ProductScreen(),
-        DetailsScreen.routeName : (BuildContext context )=>DetailsScreen()
+        DetailsScreen.routeName : (BuildContext context )=>DetailsScreen(),
+        CartScreen.routeName:(BuildContext context)=> CartScreen(),
+        OrderScreen.routeName:(BuildContext context)=> OrderScreen(),
       },
       onUnknownRoute: (RouteSettings routeGen){
         print('we ended here for sure !');

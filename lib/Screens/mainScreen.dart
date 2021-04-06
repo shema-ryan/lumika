@@ -21,7 +21,7 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0 ;
   List _screen = List.unmodifiable([
     ProductScreen(),
-    ProductScreen(),
+    OrderScreen(),
     ProductScreen(),
   ]);
   @override
