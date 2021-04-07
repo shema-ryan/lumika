@@ -2,15 +2,21 @@ import '../Provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 class Order{
   final String id ;
+  final String address;
+  final String delivery;
   final String name ;
   final DateTime placedOn ;
   final List<CartItem> product ;
   final double total ;
-  Order({required this.id , required this.total ,required this.name, required this.placedOn, required this.product});
+  String deliveryStatus = 'ordered';
+  Order({  this.deliveryStatus = 'ordered' , required this.delivery , required this.address , required this.id , required this.total ,required this.name, required this.placedOn, required this.product});
 
  static  Future<void> addOrder({required Order order })async{
     try{
       await FirebaseFirestore.instance.collection('Order').add({
+        'status':order.deliveryStatus,
+        'delivery':order.delivery,
+        'address':order.address,
         'id' : order.id,
         'orderBy' : order.name ,
         'placedOn' : order.placedOn.toIso8601String(),
@@ -28,16 +34,20 @@ class Order{
           }
         }).toList(),
       });
-    }catch(e){
+    }
+    catch(e){
       throw e ;
     }
   }
   
  static Future<List<Order>> fetchAndSetOrder(String name)async{
-   QuerySnapshot doc = await FirebaseFirestore.instance.collection('Order').where('orderBy', isEqualTo:name).get();
+   QuerySnapshot doc = await FirebaseFirestore.instance.collection('Order').orderBy('placedOn' , descending: true).where('orderBy' , isEqualTo: name).get();
    List<Order> _order = [] ;
    doc.docs.forEach((element) {
      _order.add(Order(
+       deliveryStatus: element['status'],
+       delivery: element['delivery'],
+       address: element['address'],
        id: element['id'] ,
        name: element['orderBy'],
        total: element['amount'],

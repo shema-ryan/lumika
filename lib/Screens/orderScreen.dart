@@ -4,7 +4,7 @@ import '../Provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 class OrderScreen extends StatelessWidget {
   static const String routeName = 'OrderScreen';
-  final name  = FirebaseAuth.instance.currentUser!.displayName;
+  final name  = FirebaseAuth.instance.currentUser!.email;
 
   @override
   Widget build(BuildContext context) {
