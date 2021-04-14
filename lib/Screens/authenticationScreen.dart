@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../Widgets/widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 class AuthenticationScreen extends StatefulWidget {
+  static const routeName = 'Authentication';
   const AuthenticationScreen();
 
   @override
@@ -53,7 +54,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> with Single
                  ),
                  ),
                ),
-               const  Padding(
+               const Padding(
                   padding: const EdgeInsets.all(8.0),
                   child:const Text('a one stop center for your automobile spare parts and  repair......', style: TextStyle(
                     color: Colors.white,

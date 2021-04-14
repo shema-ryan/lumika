@@ -49,15 +49,15 @@ class OrderWidget extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Payment Method:\n${_order[index].delivery}'),
+                        Text('Payment Method: ${_order[index].delivery}'),
                         const SizedBox(
                           height: 10,
                         ),
-                        Text('OrderState: \n${_order[index].deliveryStatus}'),
+                        Text('OrderState: ${_order[index].deliveryStatus}'),
                         const SizedBox(
                           height: 10,
                         ),
-                        Text('Address :\n${_order[index].address}')
+                        Text('Address : ${_order[index].address}')
                       ],
                     ),
                     const SizedBox(

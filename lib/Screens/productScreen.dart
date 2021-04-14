@@ -25,12 +25,6 @@ class _ProductScreenState extends State<ProductScreen> {
         : Provider.of<ProductList>(context).filter(shema!);
     final _badge = Provider.of<CartProvider>(context).cart.length;
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        child: Text('fen'),
-        onPressed: (){
-          Provider.of<AppTheme>(context , listen: false).changeTheme();
-        },
-      ),
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: _theme.appBarTheme.backgroundColor,
@@ -101,7 +95,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 child: TextField(
                   onChanged: (value) {
                     setState(() {
-                      shema = value.toUpperCase();
+                      shema = value.toLowerCase();
                     });
                   },
                   cursorColor: Colors.black,
@@ -146,6 +140,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         textAlign: TextAlign.center,
                       ),
                     ),
+              const SizedBox(height: 20,),
             ],
           ),
         ),

@@ -1,5 +1,6 @@
+import 'dart:async';
 import 'dart:math';
-
+import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:garage/Screens/mainScreen.dart';
@@ -18,10 +19,10 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  final TextEditingController _textEditingController = TextEditingController();
   final List<String> promoCode = [
     '' , 'jesus is lord'
   ];
-  double calculatedTotal = 0;
   final user = FirebaseAuth.instance.currentUser;
   final _form = GlobalKey<FormState>();
   bool _loading = false;
@@ -29,14 +30,47 @@ class _CartScreenState extends State<CartScreen> {
   bool step2  = false ;
    String address = '' ;
    String delivery = '';
+   double  discount = 0.0;
+   late double total ;
    Delivery _delivery = Delivery.usingMoMo;
+  ConnectivityResult? connectivity;
+   // ignore: cancel_subscriptions
+   StreamSubscription? subscription ;
 
+   @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero,()async{
+      connectivity = await Connectivity().checkConnectivity();
+    });
+     subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult event) {
+      if (event == ConnectivityResult.mobile || event == ConnectivityResult.wifi) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content:const  Text('you\'re online' , textAlign: TextAlign.center,),
+          backgroundColor: Colors.green,
+        ));
+      }
+      else{
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.red,
+          content: const Text('you\'re offline', textAlign: TextAlign.center,),
+        ));
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    subscription!.cancel();
+    _textEditingController.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     final _theme = Theme.of(context);
     final _shoppingCart = Provider.of<CartProvider>(context);
     final _media = MediaQuery.of(context).size.width;
-
+    total = _shoppingCart.totalAmount();
     return Scaffold(
       bottomNavigationBar: BottomAppBar(
         child: Padding(
@@ -44,20 +78,22 @@ class _CartScreenState extends State<CartScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              calculatedTotal == 0
-                  ? Text(
-                      'Total :  \$ ${_shoppingCart.totalAmount()}',
-                      style: _theme.textTheme.headline6,
-                    )
-                  : Text(
-                      'Total :  \$$calculatedTotal',
+                   Text(
+                      'Total :  \$ ${total - discount + 10}',
                       style: _theme.textTheme.headline6,
                     ),
+
               _loading
                   ? CircularProgressIndicator()
                   : ElevatedButton(
                       onPressed: () {
-                        if(_form.currentState!.validate()){
+                        if(connectivity !=ConnectivityResult.wifi || connectivity != ConnectivityResult.wifi){
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            backgroundColor: Colors.red,
+                            content:const Text('you\'re offline', textAlign: TextAlign.center,),
+                          ));
+                        }
+                        else if(_form.currentState!.validate()){
                           _form.currentState!.save();
                           setState(() {
                             _loading = true;
@@ -69,7 +105,7 @@ class _CartScreenState extends State<CartScreen> {
                                 id: Random(DateTime.now().second)
                                     .nextInt(100000000)
                                     .toString(),
-                                total: _shoppingCart.totalAmount(),
+                                total: total,
                                 name: user!.email!,
                                 placedOn: DateTime.now(),
                                 product: _shoppingCart.cart.values.toList(),
@@ -181,46 +217,7 @@ class _CartScreenState extends State<CartScreen> {
                   ],
                 ),
               ),
-            const SizedBox(height: 10,),
-            Row(
-              children: [
-                Container(
-                  height: 60,
-                  width: _media * 0.76,
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      hintText: ' Enter a promo code ',
-                      border: InputBorder.none,
-                      fillColor: _theme.primaryColor.withOpacity(0.5),
-                      filled: true,
-                      // border: OutlineInputBorder(
-                      //     borderRadius: BorderRadius.circular(10)),
-                    ),
-                    validator: (value) {
-                      if (!promoCode.contains(value)) {
-                        return 'Enter a valid Promo code';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    FocusScope.of(context).unfocus();
-                    if (_form.currentState!.validate()) {
-                      setState(() {
-                        calculatedTotal =
-                            _shoppingCart.totalAmount() * 0.15;
-                      });
-                    }
-                  },
-                  child: Text(
-                    'apply',
-                    style: _theme.textTheme.headline6,
-                  ),
-                ),
-              ],
-            ),
+
             const SizedBox(height: 20,),
             Text('Delivery Details' , style: _theme.textTheme.headline6,),
             Theme(
@@ -234,6 +231,7 @@ class _CartScreenState extends State<CartScreen> {
                 currentStep: _currentStep,
                 onStepContinue: (){
                   if (_currentStep < 1 && _form.currentState!.validate()){
+                    FocusScope.of(context).unfocus();
                     setState(() {
                       _currentStep ++ ;
                       step2 = true ;
@@ -255,6 +253,11 @@ class _CartScreenState extends State<CartScreen> {
                     isActive: true ,
                     title:const Text('Address'),
                     content: TextFormField(
+                      style: _theme.textTheme.bodyText2,
+
+                      autofillHints: [
+                        "kamanzishema@gmail.com", "kamanzishyaka@gmail.com",'call me by names'
+                      ],
                       onChanged: (value){
                         address = value;
                       },
@@ -273,31 +276,123 @@ class _CartScreenState extends State<CartScreen> {
                     state: _currentStep == 1 ? StepState.indexed : _loading ?  StepState.complete : StepState.indexed,
                     isActive: step2,
                     title: const Text('Payment Method'),
-                    content: DropdownButton(
-                      value: _delivery,
-                      onChanged: (value){
-                        setState(() {
-                          _delivery = value as Delivery;
-                        });
-                        if(value == Delivery.usingMoMo) delivery = 'Momo';
-                        delivery = 'on delivery';
-                      },
-                      items: [
-                        DropdownMenuItem(child: Text('on delivery') , value: Delivery.onDelivery,onTap: (){
-                          FocusScope.of(context).unfocus();
-                        },),
-                        DropdownMenuItem(child: Text('Using MoMo') , value: Delivery.usingMoMo,),
-                      ],
+                    content: ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: DropdownButtonFormField(
+                        onSaved: (value){
+                          if(value == Delivery.usingMoMo) delivery = 'Momo';
+                          delivery = 'on delivery';
+                        },
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor:  _theme.primaryColor.withOpacity(0.5),
+                        ),
+                        value: _delivery,
+                        onChanged: (value){
+                          setState(() {
+                            _delivery = value as Delivery;
+                          });
+                        },
+                        items: [
+                          DropdownMenuItem(child: const Text('on delivery') , value: Delivery.onDelivery,onTap: (){
+                            FocusScope.of(context).unfocus();
+                          },),
+                          DropdownMenuItem(child: const Text('Using MoMo') , value: Delivery.usingMoMo,),
+                        ],
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 20,)
-
+            const SizedBox(height: 10,),
+            Row(
+              children: [
+                Container(
+                  height: 60,
+                  width: _media * 0.76,
+                  child: TextFormField(
+                    controller: _textEditingController,
+                    decoration: InputDecoration(
+                      hintText: ' Enter a promo code ',
+                      border: InputBorder.none,
+                      fillColor: _theme.primaryColor.withOpacity(0.5),
+                      filled: true,
+                      // border: OutlineInputBorder(
+                      //     borderRadius: BorderRadius.circular(10)),
+                    ),
+                    validator: (value) {
+                      if (!promoCode.contains(value)) {
+                        return 'Enter a valid Promo code';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    FocusScope.of(context).unfocus();
+                    if (_form.currentState!.validate() && _textEditingController.text !='' ) {
+                      setState(() {
+                        discount =
+                            total * 0.015;
+                      });
+                    }
+                  },
+                  child: Text(
+                    'apply',
+                    style: _theme.textTheme.headline6,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20,),
+            Text(' Cart Summary' , style: _theme.textTheme.headline6,),
+            const SizedBox(height: 5,),
+            Card(
+              elevation: 10,
+              shadowColor: Colors.transparent,
+            color: _theme.primaryColor.withOpacity(0.5),
+                child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column
+                (
+       children: [
+         rowBuilder('Amount' , total , context ),
+         rowBuilder('Discount' , -discount, context),
+         rowBuilder('Delivery' , 10 , context),
+          Text('------------------------------------'),
+         Row(
+           mainAxisAlignment: MainAxisAlignment.end,
+           children: [
+             Text('Total Amount :' , style: _theme.textTheme.headline6,) ,
+             SizedBox(
+               width: 10,
+             ),
+             Text('\$$total ' , style: _theme.textTheme.headline6,),
+           ],
+         ),
+       ],
+              ),
+            )),
           ],
         ),
       ),
     );
   }
+}
+Row rowBuilder(String itemName , double amount , BuildContext context){
+  final _theme = Theme.of(context);
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(itemName , style: _theme.textTheme.headline6!.copyWith(
+        fontSize: 16
+      ),),
+      Text('\$ $amount' , style: _theme.textTheme.headline6!.copyWith(
+        fontSize: 16
+      ),),
+    ],
+  );
 }

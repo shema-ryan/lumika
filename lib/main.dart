@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:garage/Provider/cartProvider.dart';
 import 'package:provider/provider.dart';
@@ -13,10 +14,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 void main()async{
   WidgetsFlutterBinding.ensureInitialized();
-  // SystemChrome.setPreferredOrientations([
-  //   DeviceOrientation.portraitUp,
-  //   DeviceOrientation.portraitDown,
-  // ]);
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   await Firebase.initializeApp();
   runApp(MyApp());
 }
@@ -42,6 +43,8 @@ class MyApp extends StatelessWidget {
   }
 }
 class HomePage extends StatelessWidget {
+
+  static final String routeName = '/';
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -71,6 +74,7 @@ class HomePage extends StatelessWidget {
         }
       ),
       routes: {
+        AuthenticationScreen.routeName:(BuildContext context )=>AuthenticationScreen(),
         ResetPassword.routeName:(BuildContext context )=>ResetPassword(),
         MainScreen.routeName : (BuildContext context)=>MainScreen(),
         ConfirmScreen.routeName :(BuildContext context)=> ConfirmScreen(),

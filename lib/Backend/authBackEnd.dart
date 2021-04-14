@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 class Auth {
  static  Future<void> createAccount(
       {required String name,
@@ -18,6 +19,13 @@ class Auth {
         photoURL: imageUrl,
       );
       userCredential.user!.sendEmailVerification();
+      await FirebaseFirestore.instance.collection('Users').add({
+        'name': name ,
+        'email':email,
+        'phoneNumber': phoneNumber,
+        'url':imageUrl,
+      });
+
     } on FirebaseAuthException catch (e) {
       throw e.message!;
     } catch (e) {

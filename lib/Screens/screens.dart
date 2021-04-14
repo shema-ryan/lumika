@@ -6,3 +6,6 @@ export 'productScreen.dart';
 export 'detailScreen.dart';
 export 'cartScreen.dart';
 export 'orderScreen.dart';
+export 'ProfileScreen.dart';
+export 'settingScreen.dart';
+export 'chattingScreen.dart';

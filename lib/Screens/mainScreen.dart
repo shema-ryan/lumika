@@ -22,7 +22,8 @@ class _MainScreenState extends State<MainScreen> {
   List _screen = List.unmodifiable([
     ProductScreen(),
     OrderScreen(),
-    ProductScreen(),
+    ChattingScreen(),
+    ProfileScreen(),
   ]);
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,7 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: _theme.primaryColor,
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.black54,
+        selectedItemColor: _theme.primaryColor,
         unselectedItemColor: _theme.accentColor ,
         onTap: (selectedIndex){
         setState(() {
@@ -42,6 +43,7 @@ class _MainScreenState extends State<MainScreen> {
         items: [
           BottomNavigationBarItem(icon: const Icon(Icons.home) ,label: 'home' ),
           BottomNavigationBarItem(icon: const Icon(Icons.shopping_bag_rounded) , label: 'orders'),
+          BottomNavigationBarItem(icon: Icon(Icons.message) , label: 'messages' , activeIcon: Icon(Icons.chat_bubble_outline)),
           BottomNavigationBarItem(icon: const Icon(Icons.person_rounded),label: 'profile'),
         ],
       ),

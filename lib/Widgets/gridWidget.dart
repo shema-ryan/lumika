@@ -22,55 +22,60 @@ class GridWidget extends StatelessWidget {
         FocusScope.of(context).unfocus();
         Navigator.of(context).pushNamed(DetailsScreen.routeName, arguments: _obtainedProduct);
       },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10.0),
-          child: Column(
-            children: [
-              Expanded(
-                child: Hero(
-                  tag: _obtainedProduct.id,
-                  child: FadeInImage(
-                    placeholder:const AssetImage('assets/96x96.gif'),
-                    fit: BoxFit.cover,
-                    image: NetworkImage(
-                      _obtainedProduct.url,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10.0),
+        child: GridTile(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Column(
+              children: [
+                Expanded(
+                  child: Hero(
+                    tag: _obtainedProduct.id,
+                    child: FadeInImage(
+                      placeholder:const AssetImage('assets/96x96.gif'),
+                      fit: BoxFit.cover,
+                      image: NetworkImage(
+                        _obtainedProduct.url,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              GridTileBar(
-                trailing: IconButton(
-                    icon: Icon(
-                      Icons.shopping_cart,
-                      color: _theme.iconTheme.color,
-                    ),
-                    onPressed: () {
-                      _scaffold.removeCurrentSnackBar(reason: SnackBarClosedReason.timeout);
-                      Provider.of<CartProvider>(context , listen: false).addCart(product: _obtainedProduct);
-                      _scaffold.showSnackBar(SnackBar(
-                        content: const Text('an item has been added to cart'),
-                        action: SnackBarAction(
-                          label: 'UNDO',
-                          onPressed: (){
-                            Provider.of<CartProvider>(context , listen: false).removeCartItem(_obtainedProduct);
-                          },
-                        ),
-                      ));
-                    }),
-                backgroundColor: Colors.black26,
-                title: Text(
-                  _obtainedProduct.name,
-                  style: _theme.textTheme.bodyText2,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
+          footer:GridTileBar(
+            backgroundColor: Colors.grey.withOpacity(0.5),
+            trailing: IconButton(
+                icon: Icon(
+                  Icons.shopping_cart,
+                  color: _theme.iconTheme.color,
+                ),
+                onPressed: () {
+                  _scaffold.removeCurrentSnackBar(reason: SnackBarClosedReason.timeout);
+                  Provider.of<CartProvider>(context , listen: false).addCart(product: _obtainedProduct);
+                  _scaffold.showSnackBar(SnackBar(
+                    content: const Text('an item has been added to cart'),
+                    action: SnackBarAction(
+                      label: 'UNDO',
+                      onPressed: (){
+                        Provider.of<CartProvider>(context , listen: false).removeCartItem(_obtainedProduct);
+                      },
+                    ),
+                  ));
+                }),
+            title: Text(
+              _obtainedProduct.name,
+              style: _theme.textTheme.bodyText2,
+            ),
+          ) ,
+
         ),
       ),
     );
   }
 }
+
+
