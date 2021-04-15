@@ -91,7 +91,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 height: 10,
               ),
               SizedBox(
-                height: _media * 0.127,
+                height: _media * 0.11,
                 child: TextField(
                   onChanged: (value) {
                     setState(() {
@@ -113,13 +113,14 @@ class _ProductScreenState extends State<ProductScreen> {
                   ),
                 ),
               ),
-              SizedBox(
+            const   SizedBox(
                 height: 10,
               ),
               _obtainedProduct.isNotEmpty
                   ? Container(
-                      height: _media * 1.35,
+                      height: _media * 1.37,
                       child: GridView.builder(
+
                           itemCount: _obtainedProduct.length,
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
@@ -140,7 +141,6 @@ class _ProductScreenState extends State<ProductScreen> {
                         textAlign: TextAlign.center,
                       ),
                     ),
-              const SizedBox(height: 20,),
             ],
           ),
         ),

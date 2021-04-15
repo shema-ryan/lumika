@@ -7,10 +7,12 @@ import 'package:garage/Screens/mainScreen.dart';
 import 'package:provider/provider.dart';
 
 import '../Provider/provider.dart';
-enum Delivery{
+
+enum Delivery {
   onDelivery,
   usingMoMo,
 }
+
 class CartScreen extends StatefulWidget {
   static const routeName = '/CartScreen';
 
@@ -20,40 +22,45 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   final TextEditingController _textEditingController = TextEditingController();
-  final List<String> promoCode = [
-    '' , 'jesus is lord'
-  ];
+  final List<String> promoCode = ['', 'jesus is lord'];
   final user = FirebaseAuth.instance.currentUser;
   final _form = GlobalKey<FormState>();
   bool _loading = false;
-  int _currentStep = 0 ;
-  bool step2  = false ;
-   String address = '' ;
-   String delivery = '';
-   double  discount = 0.0;
-   late double total ;
-   Delivery _delivery = Delivery.usingMoMo;
+  int _currentStep = 0;
+  bool step2 = false;
+  String address = '';
+  String delivery = '';
+  double discount = 0.0;
+  late double total;
+  Delivery _delivery = Delivery.usingMoMo;
   ConnectivityResult? connectivity;
-   // ignore: cancel_subscriptions
-   StreamSubscription? subscription ;
+  // ignore: cancel_subscriptions
+  StreamSubscription? subscription;
 
-   @override
+  @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero,()async{
+    Future.delayed(Duration.zero, () async {
       connectivity = await Connectivity().checkConnectivity();
     });
-     subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult event) {
-      if (event == ConnectivityResult.mobile || event == ConnectivityResult.wifi) {
+    subscription =
+        Connectivity().onConnectivityChanged.listen((ConnectivityResult event) {
+      if (event == ConnectivityResult.mobile ||
+          event == ConnectivityResult.wifi) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content:const  Text('you\'re online' , textAlign: TextAlign.center,),
+          content: const Text(
+            'you\'re online',
+            textAlign: TextAlign.center,
+          ),
           backgroundColor: Colors.green,
         ));
-      }
-      else{
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.red,
-          content: const Text('you\'re offline', textAlign: TextAlign.center,),
+          content: const Text(
+            'you\'re offline',
+            textAlign: TextAlign.center,
+          ),
         ));
       }
     });
@@ -65,6 +72,7 @@ class _CartScreenState extends State<CartScreen> {
     subscription!.cancel();
     _textEditingController.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     final _theme = Theme.of(context);
@@ -78,38 +86,40 @@ class _CartScreenState extends State<CartScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-                   Text(
-                      'Total :  \$ ${total - discount + 10}',
-                      style: _theme.textTheme.headline6,
-                    ),
-
+              Text(
+                'Total :  \$ ${total - discount + 10}',
+                style: _theme.textTheme.headline6,
+              ),
               _loading
                   ? CircularProgressIndicator()
                   : ElevatedButton(
                       onPressed: () {
-                        if(connectivity !=ConnectivityResult.wifi || connectivity != ConnectivityResult.wifi){
+                        if (connectivity != ConnectivityResult.wifi ||
+                            connectivity != ConnectivityResult.wifi) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             backgroundColor: Colors.red,
-                            content:const Text('you\'re offline', textAlign: TextAlign.center,),
+                            content: const Text(
+                              'you\'re offline',
+                              textAlign: TextAlign.center,
+                            ),
                           ));
-                        }
-                        else if(_form.currentState!.validate()){
+                        } else if (_form.currentState!.validate()) {
                           _form.currentState!.save();
                           setState(() {
                             _loading = true;
                           });
                           Order.addOrder(
                               order: Order(
-                                delivery: delivery,
-                                address: address,
-                                id: Random(DateTime.now().second)
-                                    .nextInt(100000000)
-                                    .toString(),
-                                total: total,
-                                name: user!.email!,
-                                placedOn: DateTime.now(),
-                                product: _shoppingCart.cart.values.toList(),
-                              )).then((_) {
+                            delivery: delivery,
+                            address: address,
+                            id: Random(DateTime.now().second)
+                                .nextInt(100000000)
+                                .toString(),
+                            total: (total - discount + 10),
+                            name: user!.email!,
+                            placedOn: DateTime.now(),
+                            product: _shoppingCart.cart.values.toList(),
+                          )).then((_) {
                             Navigator.of(context).pushNamedAndRemoveUntil(
                                 MainScreen.routeName, (route) => false);
                             _shoppingCart.clearCart();
@@ -136,8 +146,11 @@ class _CartScreenState extends State<CartScreen> {
       ),
       appBar: AppBar(
         leading: IconButton(
-          icon:  Icon(Icons.arrow_back , color: _theme.textTheme.headline6!.color,),
-          onPressed: (){
+          icon: Icon(
+            Icons.arrow_back,
+            color: _theme.textTheme.headline6!.color,
+          ),
+          onPressed: () {
             Navigator.of(context).pop();
           },
         ),
@@ -154,7 +167,7 @@ class _CartScreenState extends State<CartScreen> {
           children: [
             for (CartItem cart in _shoppingCart.cart.values)
               Padding(
-                padding: const EdgeInsets.symmetric( vertical :10.0),
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -204,7 +217,8 @@ class _CartScreenState extends State<CartScreen> {
                             color: Colors.orangeAccent,
                           ),
                         ),
-                        FittedBox(child: Text(cart.quantity.toInt().toString())),
+                        FittedBox(
+                            child: Text(cart.quantity.toInt().toString())),
                         TextButton(
                           onPressed: () {
                             _shoppingCart.removeCartItem(cart.product);
@@ -217,9 +231,13 @@ class _CartScreenState extends State<CartScreen> {
                   ],
                 ),
               ),
-
-            const SizedBox(height: 20,),
-            Text('Delivery Details' , style: _theme.textTheme.headline6,),
+            const SizedBox(
+              height: 20,
+            ),
+            Text(
+              'Delivery Details',
+              style: _theme.textTheme.headline6,
+            ),
             Theme(
               data: ThemeData(
                 primaryColor: Color(0xffE8B44A),
@@ -229,76 +247,88 @@ class _CartScreenState extends State<CartScreen> {
               ),
               child: Stepper(
                 currentStep: _currentStep,
-                onStepContinue: (){
-                  if (_currentStep < 1 && _form.currentState!.validate()){
+                onStepContinue: () {
+                  if (_currentStep < 1 && _form.currentState!.validate()) {
                     FocusScope.of(context).unfocus();
                     setState(() {
-                      _currentStep ++ ;
-                      step2 = true ;
+                      _currentStep++;
+                      step2 = true;
                     });
                   }
                 },
-                onStepCancel: (){
-                  if(_currentStep >=1 ){
+                onStepCancel: () {
+                  if (_currentStep >= 1) {
                     setState(() {
                       _form.currentState!.save();
-                      _currentStep --;
-                      step2 = false ;
+                      _currentStep--;
+                      step2 = false;
                     });
                   }
                 },
                 steps: [
                   Step(
-                    state: _currentStep == 0 ? StepState.indexed : StepState.complete ,
-                    isActive: true ,
-                    title:const Text('Address'),
+                    state: _currentStep == 0
+                        ? StepState.indexed
+                        : StepState.complete,
+                    isActive: true,
+                    title: const Text('Address'),
                     content: TextFormField(
                       style: _theme.textTheme.bodyText2,
-
                       autofillHints: [
-                        "kamanzishema@gmail.com", "kamanzishyaka@gmail.com",'call me by names'
+                        "kamanzishema@gmail.com",
+                        "kamanzishyaka@gmail.com",
+                        'call me by names'
                       ],
-                      onChanged: (value){
+                      onChanged: (value) {
                         address = value;
                       },
-                      validator: (value){
-                        if(value == '' && value!.length <=0 ){
+                      validator: (value) {
+                        if (value == '' && value!.length <= 0) {
                           return 'we need a valid address';
                         }
-                         return null ;
+                        return null;
                       },
-                      decoration: InputDecoration(
-                        hintText: 'address'
-                      ),
+                      decoration: InputDecoration(hintText: 'address'),
                     ),
-                  ) ,
+                  ),
                   Step(
-                    state: _currentStep == 1 ? StepState.indexed : _loading ?  StepState.complete : StepState.indexed,
+                    state: _currentStep == 1
+                        ? StepState.indexed
+                        : _loading
+                            ? StepState.complete
+                            : StepState.indexed,
                     isActive: step2,
                     title: const Text('Payment Method'),
                     content: ClipRRect(
                       borderRadius: BorderRadius.circular(10.0),
                       child: DropdownButtonFormField(
-                        onSaved: (value){
-                          if(value == Delivery.usingMoMo) delivery = 'Momo';
+                        onSaved: (value) {
+                          if (value == Delivery.usingMoMo) delivery = 'Momo';
                           delivery = 'on delivery';
                         },
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           filled: true,
-                          fillColor:  _theme.primaryColor.withOpacity(0.5),
+                          fillColor: _theme.primaryColor.withOpacity(0.5),
                         ),
                         value: _delivery,
-                        onChanged: (value){
+                        onChanged: (value) {
                           setState(() {
                             _delivery = value as Delivery;
                           });
                         },
                         items: [
-                          DropdownMenuItem(child: const Text('on delivery') , value: Delivery.onDelivery,onTap: (){
-                            FocusScope.of(context).unfocus();
-                          },),
-                          DropdownMenuItem(child: const Text('Using MoMo') , value: Delivery.usingMoMo,),
+                          DropdownMenuItem(
+                            child: const Text('on delivery'),
+                            value: Delivery.onDelivery,
+                            onTap: () {
+                              FocusScope.of(context).unfocus();
+                            },
+                          ),
+                          DropdownMenuItem(
+                            child: const Text('Using MoMo'),
+                            value: Delivery.usingMoMo,
+                          ),
                         ],
                       ),
                     ),
@@ -306,7 +336,9 @@ class _CartScreenState extends State<CartScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Row(
               children: [
                 Container(
@@ -333,10 +365,10 @@ class _CartScreenState extends State<CartScreen> {
                 TextButton(
                   onPressed: () {
                     FocusScope.of(context).unfocus();
-                    if (_form.currentState!.validate() && _textEditingController.text !='' ) {
+                    if (_form.currentState!.validate() &&
+                        _textEditingController.text != '') {
                       setState(() {
-                        discount =
-                            total * 0.015;
+                        discount = total * 0.015;
                       });
                     }
                   },
@@ -347,52 +379,67 @@ class _CartScreenState extends State<CartScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 20,),
-            Text(' Cart Summary' , style: _theme.textTheme.headline6,),
-            const SizedBox(height: 5,),
+            const SizedBox(
+              height: 20,
+            ),
+            Text(
+              ' Cart Summary',
+              style: _theme.textTheme.headline6,
+            ),
+            const SizedBox(
+              height: 5,
+            ),
             Card(
-              elevation: 10,
-              shadowColor: Colors.transparent,
-            color: _theme.primaryColor.withOpacity(0.5),
+                elevation: 10,
+                shadowColor: Colors.transparent,
+                color: _theme.primaryColor.withOpacity(0.5),
                 child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column
-                (
-       children: [
-         rowBuilder('Amount' , total , context ),
-         rowBuilder('Discount' , -discount, context),
-         rowBuilder('Delivery' , 10 , context),
-          Text('------------------------------------'),
-         Row(
-           mainAxisAlignment: MainAxisAlignment.end,
-           children: [
-             Text('Total Amount :' , style: _theme.textTheme.headline6,) ,
-             SizedBox(
-               width: 10,
-             ),
-             Text('\$$total ' , style: _theme.textTheme.headline6,),
-           ],
-         ),
-       ],
-              ),
-            )),
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      rowBuilder('Amount', total, context),
+                      rowBuilder('Discount', discount == 0? 0:-discount, context),
+                      rowBuilder('Delivery', 10, context),
+                     const  Text('------------------------------------'),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Total Amount :',
+                            style: _theme.textTheme.headline6,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            '\$${total - discount + 10}',
+                            style: _theme.textTheme.headline6,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )),
           ],
         ),
       ),
     );
   }
 }
-Row rowBuilder(String itemName , double amount , BuildContext context){
+
+Row rowBuilder(String itemName, double amount, BuildContext context) {
   final _theme = Theme.of(context);
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
-      Text(itemName , style: _theme.textTheme.headline6!.copyWith(
-        fontSize: 16
-      ),),
-      Text('\$ $amount' , style: _theme.textTheme.headline6!.copyWith(
-        fontSize: 16
-      ),),
+      Text(
+        itemName,
+        style: _theme.textTheme.headline6!.copyWith(fontSize: 16),
+      ),
+      Text(
+        '\$ $amount',
+        style: _theme.textTheme.headline6!.copyWith(fontSize: 16),
+      ),
     ],
   );
 }

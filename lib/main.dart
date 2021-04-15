@@ -84,7 +84,6 @@ class HomePage extends StatelessWidget {
         OrderScreen.routeName:(BuildContext context)=> OrderScreen(),
       },
       onUnknownRoute: (RouteSettings routeGen){
-        print('we ended here for sure !');
         if(routeGen.name != null){
           return MaterialPageRoute(builder: (context)=> Scaffold(
             appBar: AppBar(title:  Text('Sorry Beloved' , style: Theme.of(context).textTheme.headline6,), centerTitle: true, elevation: 0.0, iconTheme:Theme.of(context).iconTheme,),

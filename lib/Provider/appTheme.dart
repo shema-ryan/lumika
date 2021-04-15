@@ -15,7 +15,7 @@ class AppTheme extends ChangeNotifier {
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                primary: Color(0xffE8B44A),
+                primary: const Color(0xffE8B44A),
               ),
             ),
             elevatedButtonTheme: ElevatedButtonThemeData(
