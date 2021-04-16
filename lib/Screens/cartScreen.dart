@@ -47,6 +47,7 @@ class _CartScreenState extends State<CartScreen> {
         Connectivity().onConnectivityChanged.listen((ConnectivityResult event) {
       if (event == ConnectivityResult.mobile ||
           event == ConnectivityResult.wifi) {
+        connectivity = event ;
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: const Text(
             'you\'re online',
@@ -94,8 +95,7 @@ class _CartScreenState extends State<CartScreen> {
                   ? CircularProgressIndicator()
                   : ElevatedButton(
                       onPressed: () {
-                        if (connectivity != ConnectivityResult.wifi ||
-                            connectivity != ConnectivityResult.wifi) {
+                        if (connectivity == ConnectivityResult.none) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             backgroundColor: Colors.red,
                             content: const Text(

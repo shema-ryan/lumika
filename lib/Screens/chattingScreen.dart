@@ -33,7 +33,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
    return Scaffold(
      body: StreamBuilder(
-       stream: FirebaseFirestore.instance.collection('Messages').doc(chatId).collection('Message').orderBy('id' , descending:true).limitToLast(10).snapshots(),
+       stream: FirebaseFirestore.instance.collection('Messages').doc(chatId).collection('Message').orderBy('id' , descending:true).snapshots(),
          builder: (context , AsyncSnapshot<QuerySnapshot >snapshot ){
          if(snapshot.hasError){
            return const Text('there is an error please ') ;
