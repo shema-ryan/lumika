@@ -50,7 +50,7 @@ class Order{
        address: element['address'],
        id: element['id'] ,
        name: element['orderBy'],
-       total: element['amount'],
+       total: (element['amount'] as num).toDouble(),
        placedOn: DateTime.parse(element['placedOn']),
        product: (element['products'] as List<dynamic>).map((e) =>CartItem(
          id: e['id'],
