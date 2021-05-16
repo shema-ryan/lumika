@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:garage/Screens/cartScreen.dart';
@@ -15,6 +16,7 @@ class ProductScreen extends StatefulWidget {
 class _ProductScreenState extends State<ProductScreen> {
   final _auth = FirebaseAuth.instance.currentUser;
   String? shema;
+  var a = 1 ;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,7 @@ class _ProductScreenState extends State<ProductScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: _theme.appBarTheme.backgroundColor,
+        backgroundColor:_theme.appBarTheme.backgroundColor,
         elevation: 0,
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -85,33 +87,31 @@ class _ProductScreenState extends State<ProductScreen> {
               ),
               Text(
                 ' Welcome ${_auth!.displayName}',
-                style: _theme.textTheme.headline6,
+                style: _theme.textTheme.headline6!.copyWith(
+                  fontSize: 17
+                ),
               ),
               const SizedBox(
                 height: 10,
               ),
               SizedBox(
-                height: _media * 0.12,
-                child: TextField(
-                  onChanged: (value) {
-                    setState(() {
-                      shema = value.toLowerCase();
-                    });
-                  },
-                  cursorColor: Colors.black,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(15),
+                height: _media * 0.1,
+                child:  Theme(
+                  data: ThemeData(
+                    cupertinoOverrideTheme: CupertinoThemeData(
+                      primaryColor: _theme.primaryColor
                     ),
-                    hintStyle: _theme.textTheme.headline6!
-                        .copyWith(color: Colors.black54),
-                    hintText: 'search........',
-                    prefixIcon: const Icon(Icons.search),
                   ),
+                  child: CupertinoSearchTextField(
+                      style: _theme.textTheme.headline6!.copyWith(fontSize: 15),
+                      onChanged: (value) {
+                        setState(() {
+                          shema = value.toLowerCase();
+                        });
+                      },
+                    ),
                 ),
+
               ),
             const   SizedBox(
                 height: 10,

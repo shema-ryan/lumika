@@ -19,13 +19,13 @@ class Auth {
         photoURL: imageUrl,
       );
       userCredential.user!.sendEmailVerification();
+
       await FirebaseFirestore.instance.collection('Users').add({
         'name': name ,
         'email':email,
         'phoneNumber': phoneNumber,
         'url':imageUrl,
       });
-
     } on FirebaseAuthException catch (e) {
       throw e.message!;
     } catch (e) {
