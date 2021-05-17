@@ -67,7 +67,7 @@ class GridWidget extends StatelessWidget {
                   ));
                 }),
             title: Text(
-              _obtainedProduct.name,
+              _obtainedProduct.name.toUpperCase(),
               style: _theme.textTheme.bodyText2,
             ),
           ) ,

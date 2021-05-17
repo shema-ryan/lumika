@@ -77,7 +77,7 @@ class _ProductScreenState extends State<ProductScreen> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(5.0),
+        padding: const EdgeInsets.only(top:5.0, right: 5.0 , left: 5.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,21 +117,24 @@ class _ProductScreenState extends State<ProductScreen> {
                 height: 10,
               ),
               _obtainedProduct.isNotEmpty
-                  ? Container(
+                  ? ClipRRect(
+                borderRadius:  BorderRadius.circular(10),
+                    child: Container(
                 height: _media*1.37,
-                      child: GridView.builder(
-                          itemCount: _obtainedProduct.length,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 2 / 3,
-                            crossAxisSpacing: 2,
-                            mainAxisSpacing: 2,
-                          ),
-                          itemBuilder: (context, index) => GridWidget(
-                              obtainedProduct: _obtainedProduct[index],
-                              theme: _theme)),
-                    )
+                        child: GridView.builder(
+                            itemCount: _obtainedProduct.length,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 2 / 3,
+                              crossAxisSpacing: 5,
+                              mainAxisSpacing: 5,
+                            ),
+                            itemBuilder: (context, index) => GridWidget(
+                                obtainedProduct: _obtainedProduct[index],
+                                theme: _theme)),
+                      ),
+                  )
                   : Padding(
                       padding: const EdgeInsets.all(50),
                       child: Text(
